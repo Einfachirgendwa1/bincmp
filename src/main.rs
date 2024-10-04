@@ -4,7 +4,7 @@ use std::{
     io::{Read, Write},
 };
 
-use clap::Parser;
+use clap::{ArgAction, Parser};
 
 #[derive(Parser)]
 struct Cli {
@@ -12,10 +12,17 @@ struct Cli {
 
     #[arg(long, short)]
     output: Option<String>,
+
+    #[arg(long, short, action = ArgAction::SetTrue)]
+    verbose: bool,
 }
 
 fn main() {
-    let Cli { file, output } = Cli::parse();
+    let Cli {
+        file,
+        output,
+        verbose,
+    } = Cli::parse();
 
     let output = output.unwrap_or("out".to_string());
 
@@ -56,7 +63,9 @@ fn main() {
         }
     }
 
-    println!("{out:?}");
+    if verbose {
+        println!("{out:?}");
+    }
 
     let mut outfile = File::create(output).unwrap();
     outfile.write_all(out.as_slice()).unwrap();
